@@ -1,4 +1,4 @@
-package com.jfeatehr.Utils;
+package com.jfeather.Utils;
 
 abstract public class Contains {
 
