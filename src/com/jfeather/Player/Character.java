@@ -19,14 +19,44 @@ public class Character {
 	
 	// Attributes of a character
 	private String name = DEFAULT_NAME;
+	private int level;
+	private int health, maxHealth;
+	private ArrayList<String> items;
 	
 	// Reference variables and values
 	private File saveFile;
 	
+	// This constructor is for creating a brand new character, and will assign many values to their default
 	public Character(String newName) {
 		if (Contains.arrElementsInString(invalidChars, newName) == -1)
 			name = newName;
 		saveFile = new File(TerminalApplication.RESOURCES_PATH + "Saves/" + name.toLowerCase());
+		level = 1;
+		items = new ArrayList<>();
+	}
+	
+	// This constructor is for reading in character data, and needs every field and assumes nothings
+	public Character(String newName, int newLevel, ArrayList<String> newItems) {
+		name = newName;
+		level = newLevel;
+		items = newItems;
+	}
+	
+	public void giveItem(String newItem) {
+		items.add(newItem);
+	}
+	
+	public ArrayList<String> getItems() {
+		return items;
+	}
+	
+	public void printItems() {
+		if (items.size() > 0) {
+			System.out.println("You have the following items:");
+			items.forEach(i -> System.out.println(i));
+		} else {
+			System.out.println("You can't seem to find anything!"); // TODO Make this more them appropriate
+		}
 	}
 	
 	public void setName(String newName) {
@@ -47,6 +77,10 @@ public class Character {
 	
 	public String getSaveFilePath() {
 		return saveFile.getPath();
+	}
+	
+	public int getLevel() {
+		return level;
 	}
 	
 	public void saveCharacter() {
@@ -95,6 +129,7 @@ public class Character {
 					// Temporary attributes for each read in character
 					// TODO: add the rest of the attributes when I think of them
 					String name = null;
+					String level = null;
 					
 					while ((line = br.readLine()) != null) {
 						// Iterate through every line
@@ -140,9 +175,13 @@ public class Character {
 								switch (word) {
 								// Any of the fields and attributes that a character has
 								// TODO: Fill all of these in when the attributes are decided on
-								case "name":
-									name = value;
-									break;
+									case "name":
+										name = value;
+										break;
+									case "level":
+										// This will be parsed to an integer later
+										level = value;
+										break;
 								}
 							}
 						}
