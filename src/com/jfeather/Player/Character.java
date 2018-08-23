@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.jfeather.Main.TerminalApplication;
 import com.jfeather.Utils.Contains;
@@ -43,7 +44,8 @@ public class Character {
 	}
 	
 	public void giveItem(String newItem) {
-		items.add(newItem);
+		if (newItem != null)
+			items.add(newItem);
 	}
 	
 	public ArrayList<String> getItems() {
@@ -52,10 +54,12 @@ public class Character {
 	
 	public void printItems() {
 		if (items.size() > 0) {
-			System.out.println("You have the following items:");
+			System.out.println("You have the following item(s):");
 			items.forEach(i -> System.out.println(i));
 		} else {
-			System.out.println("You can't seem to find anything!"); // TODO Make this more them appropriate
+			Random rng = new Random();
+			String[] phrase = {"You can't seem to find anything!", "I'm sure you'll find something soon...", "You have nothing!", "Your bag is empty!", "You come up empty handed!"};
+			System.out.println(phrase[rng.nextInt(phrase.length)]); // TODO Make this more them appropriate
 		}
 	}
 	
