@@ -1,5 +1,7 @@
 package com.jfeather.Main;
 
+import java.util.ArrayList;
+
 public class GameArea {
 
 	/*
@@ -12,7 +14,26 @@ public class GameArea {
 	 * People - these are NPC's that the player game interact with when in the same area as them
 	 */
 	
-	public GameArea() {
-		
+	private NPC npc;
+	private ArrayList<String> items;
+	private String description;
+	
+	// If any of these values are set to null, the program will assume that they don't exist in this level
+	public GameArea(String levelDescription, NPC levelNPC, ArrayList<String> levelItems) {
+		npc = levelNPC;
+		items = levelItems;
+		description = levelDescription;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public NPC getNPC() {
+		return npc;
+	}
+	
+	public ArrayList<String> getItems() {
+		return items;
 	}
 }

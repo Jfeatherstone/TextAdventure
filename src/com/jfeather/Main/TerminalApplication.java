@@ -3,7 +3,10 @@ package com.jfeather.Main;
 import java.util.Random;
 import java.util.Scanner;
 
+import com.jfeather.Level.GameMap;
+import com.jfeather.Level.TestMap;
 import com.jfeather.Player.Character;
+import com.jfeather.Utils.Contains;
 import com.jfeather.Utils.Keywords;
 
 public class TerminalApplication {
@@ -30,6 +33,7 @@ public class TerminalApplication {
 	private static Scanner sc;
 	private static Random rng;
 	private static Character character; // This is where the read in or created character will be assigned
+	private static GameArea currentArea;
 	public static void main(String[] args) {
 		launch();
 	}
@@ -131,11 +135,16 @@ public class TerminalApplication {
 	}
 	
 	public static void startGameLoop() {
+		// First, we grab the game map
+		GameMap map = new TestMap();
+		currentArea = map.begin();
+		System.out.println();
+		System.out.println(currentArea.getDescription());
+		
 		// When the player starts the game, we want to print out their stats (health, inventory, etc.)
 		// As well as the description of their current location where they left off
 		// This can be in this method as opposed to init() because it should happen for both new characters and loaded ones
 		// TODO
-		
 		// Turns out we don't actually need a new thread here, so this next line is just sorta legacy 
 		//gameLoop = new Thread(() -> {
 		while (true) {
@@ -146,7 +155,7 @@ public class TerminalApplication {
 			
 			// Just to separate the text so it's easier to read
 			System.out.println();
-
+			
 			// Next, we have to sort the user input such that we know what type of action the player wants to take (see below)
 			// Maybe run the user input through a method normalizes it into a few categories (movement, management, combat)
 			// and then just check every single keyword in that category to see what the game should respond with
@@ -184,12 +193,69 @@ public class TerminalApplication {
 				System.out.println(Keywords.OTHER_PHRASES[rng.nextInt(Keywords.OTHER_PHRASES.length)]);
 				break;
 			case Keywords.MOVEMENT:
-				System.out.println(category);
-				// TODO
+				/*
+				 * There are several checks for valid directions here, so I'll do my best to explain them
+				 * The program first makes sure that the user has not only used one of the keywords from the Keywords class, but also has a valid direction (east, west, etc.)
+				 * The program will then check which direction it was set to go, and see if there is an area that can be accessed there
+				 * If there is, the program will get that level, which then changes the game map's variables and prints the area description
+				 */
+				if (Contains.arrElementsAsWordsInString(new String[] {"east", "west", "north", "south", "up", "down"}, input) != -1) {
+					if (Contains.wordInString("east", input)) {
+						if (map.isThereARoomToThe(GameMap.EAST)) {
+							currentArea = map.getRoomToThe(GameMap.EAST);
+							System.out.println(currentArea.getDescription());
+						} else
+							System.out.println("You can't go that way!");
+					}
+					else if (Contains.wordInString("west", input)) {
+						if (map.isThereARoomToThe(GameMap.WEST)) {
+							currentArea = map.getRoomToThe(GameMap.WEST);
+							System.out.println(currentArea.getDescription());
+						} else
+							System.out.println("You can't go that way!");
+					}
+					else if (Contains.wordInString("north", input)) {
+						if (map.isThereARoomToThe(GameMap.NORTH)) {
+							currentArea = map.getRoomToThe(GameMap.NORTH);
+							System.out.println(currentArea.getDescription());
+						} else
+							System.out.println("You can't go that way!");
+					}
+					else if (Contains.wordInString("south", input)) {
+						if (map.isThereARoomToThe(GameMap.SOUTH)) {
+							currentArea = map.getRoomToThe(GameMap.SOUTH);
+							System.out.println(currentArea.getDescription());
+						} else
+							System.out.println("You can't go that way!");
+					}
+					else if (Contains.wordInString("up", input)) {
+						if (map.isThereARoomToThe(GameMap.UP)) {
+							currentArea = map.getRoomToThe(GameMap.UP);
+							System.out.println(currentArea.getDescription());
+						} else
+							System.out.println("You can't go that way!");
+					}
+					else if (Contains.wordInString("down", input)) {
+						if (map.isThereARoomToThe(GameMap.DOWN)) {
+							currentArea = map.getRoomToThe(GameMap.DOWN);
+							System.out.println(currentArea.getDescription());
+						} else
+							System.out.println("You can't go that way!");
+					} else
+						System.out.println("You can't go that way!");
+				} else {
+					System.out.println("I don't recognize that as a valid direction!");
+				}
 				break;
 			case Keywords.MANAGEMENT:
-				System.out.println(category);
+				//System.out.println(category);
 				// TODO
+				// Check to see if they player wants to look around
+				if (Contains.arrElementsAsWordsInString(new String[] {"look", "view", "see"}, input) != -1)
+					System.out.println(currentArea.getDescription());
+				if (Contains.arrElementsAsWordsInString(new String[] {"inventory", "items", "item"}, input) != -1)
+					character.printItems();
+
 				break;
 			case Keywords.COMBAT:
 				System.out.println(category);

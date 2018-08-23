@@ -18,7 +18,7 @@ public final class Keywords {
 
 	public static final String MANAGEMENT = "management";
 	public static final String[] MANAGEMENT_KEYWORDS = {"save", "quit", "exit", "take", "pick", "inventory", "item", "items", "wait",
-			"help", "look", "talk", "ask", "say"};
+			"help", "look", "talk", "ask", "say", "view", "see"};
 	public static final String[] NOT_MANAGEMENT_KEYWORDS = {"move", "walk", "east", "west", "north", "south", "climb", "up", "down",
 			"go", "dodge", "attack", "block"};
 	
@@ -28,7 +28,7 @@ public final class Keywords {
 	
 	public static final String OTHER = "other";
 	public static final String[] OTHER_PHRASES = {"I don't quite understand that!", "An interesting idea, but not quite practical.",
-			"I'm not sure about that one!", "Let's try something else!", "Do you hear yourself?"};
+			"I'm not sure about that one!", "Let's try something else!", "Do you hear yourself?", "I'm sorry?"};
 	// More specific keyword associations
 	
 	public static String determineCategory(String input) {

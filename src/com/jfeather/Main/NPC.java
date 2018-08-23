@@ -7,6 +7,7 @@ public class NPC {
 	/*
 	 * This should be a rather simple class, and will mainly consist of pre-made NPC's
 	 * The only things an NPC can do is either talk to the player or give them an item either right away, or after they do something
+	 * TODO make a system so that the npc can be "helped" in some way
 	 */
 	
 	public static final String NO_ITEM = "no_item";
@@ -31,11 +32,22 @@ public class NPC {
 	public void interact(Character c) {
 		if (!hasMetPlayer) {
 			System.out.println(firstInteractionText);
-			if (whenToGiveItem.equals(GIVE_ITEM_ON_MEETING))
+			if (whenToGiveItem.equals(GIVE_ITEM_ON_MEETING)) {
 				c.giveItem(item);
+				item = null; // Make sure we don't give the player the item twice
+			}
 			hasMetPlayer = true;
 		} else {
-			
+			if (!hasBeenHelped)
+				// What will happen most of the time for the user (probably)
+				System.out.println(subsequentInteractionText);
+			else {
+				System.out.println(finalInteractionText); // This will happen after the player has completed their "quest" and can't interact any further
+				if (whenToGiveItem.equals(GIVE_ITEM_ON_HELP)) {
+					c.giveItem(item);
+					item = null; // Make sure we don't give the player the item twice
+				}
+			}
 		}
 		
 	}
