@@ -1,6 +1,7 @@
 package com.jfeather.Main;
 
 import com.jfeather.Player.Character;
+import com.jfeather.Player.Item;
 
 public class NPC {
 
@@ -16,10 +17,11 @@ public class NPC {
 	public static final String GIVE_ITEM_ON_MEETING = "on_meeting";
 	public static final String GIVE_ITEM_ON_HELP = "on_help"; // This one can vary a bit, see the specific examples below for more info
 	
-	private String item, whenToGiveItem, firstInteractionText, subsequentInteractionText, finalInteractionText;
+	private String description, whenToGiveItem, firstInteractionText, subsequentInteractionText, finalInteractionText;
 	private boolean hasMetPlayer, hasBeenHelped;
+	private Item item;
 	
-	public NPC(String NPCfirstInteractionText, String NPCsubsequentInteractionText, String NPCfinalInteractionText, String NPCitem, String NPCwhenToGiveItem) {
+	public NPC(String NPCDescription, String NPCfirstInteractionText, String NPCsubsequentInteractionText, String NPCfinalInteractionText, Item NPCitem, String NPCwhenToGiveItem) {
 		item = NPCitem;
 		whenToGiveItem = NPCwhenToGiveItem;
 		firstInteractionText = NPCfirstInteractionText;
@@ -27,6 +29,7 @@ public class NPC {
 		finalInteractionText = NPCfinalInteractionText;
 		hasMetPlayer = false;
 		hasBeenHelped = false;
+		description = NPCDescription;
 	}
 	
 	public void interact(Character c) {
@@ -52,7 +55,11 @@ public class NPC {
 		
 	}
 	
-	public String getItem() {
+	public String getDescription() {
+		return description;
+	}
+	
+	public Item getItem() {
 		return item;
 	}
 	

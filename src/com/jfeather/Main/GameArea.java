@@ -1,6 +1,10 @@
 package com.jfeather.Main;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import com.jfeather.Player.Item;
 
 public class GameArea {
 
@@ -15,25 +19,57 @@ public class GameArea {
 	 */
 	
 	private NPC npc;
-	private ArrayList<String> items;
+	private ArrayList<Item> items;
 	private String description;
 	
 	// If any of these values are set to null, the program will assume that they don't exist in this level
-	public GameArea(String levelDescription, NPC levelNPC, ArrayList<String> levelItems) {
+	public GameArea(String levelDescription, NPC levelNPC, ArrayList<Item> levelItems) {
 		npc = levelNPC;
 		items = levelItems;
 		description = levelDescription;
+		items = new ArrayList<>();
 	}
 	
 	public String getDescription() {
-		return description;
+		String finalDescr = "";
+		if (items.size() < 1)
+			finalDescr = description;
+		if (items.size() == 1)
+			finalDescr = description + "\nYou see a " + items.get(0).getName() + " on the ground!";
+		if (items.size() > 1) {
+			String descr = "You see several items on the ground:";
+			for (Item i: items)
+				descr += "\nA " + i.getName();
+		}
+		if (npc != null) {
+			String[][] introPhrases = {{"You see a ", " hiding in the shadows."}, {"You spot a ", "."}};
+			int index;
+			Random rng = new Random();
+			finalDescr += "\n" + introPhrases[(index = rng.nextInt(introPhrases.length))][0] + npc.getDescription() + introPhrases[index][0];
+		}
+		return finalDescr;
 	}
 	
 	public NPC getNPC() {
 		return npc;
 	}
 	
-	public ArrayList<String> getItems() {
+	public ArrayList<Item> getItems() {
 		return items;
+	}
+	
+	public Item giveItem(String name) {
+		for (Item i: items) {
+			if (i.getName().equalsIgnoreCase(name)) {
+				Item temp = i;
+				items.remove(i);
+				return temp;
+			}
+		}
+		return null;
+	}
+	
+	public void addItem(Item item) {
+		items.add(item);
 	}
 }
