@@ -6,6 +6,7 @@ import java.util.Scanner;
 import com.jfeather.Level.GameMap;
 import com.jfeather.Level.TestMap;
 import com.jfeather.Player.Character;
+import com.jfeather.Player.Item;
 import com.jfeather.Utils.Contains;
 import com.jfeather.Utils.Keywords;
 
@@ -23,6 +24,14 @@ public class TerminalApplication {
 	 * type "save" in the terminal, and it will automatically save the character to the file
 	 * Maybe use some unique key for each creation, so you can tell if the game is overwriting an old character with the same name
 	 * And ask the user whether they really want to delete the old data
+	 * 
+	 * Level Design:
+	 * The program will be able to to read in a txt file or something that has all of the defined variables in it.
+	 * It should save a fresh copy of the level in case you want to restart or something maybe in an archive folder
+	 * All weapons and NPC's should be defined in this file as well, because they will be read in at the same time
+	 * Whenever the player saves, they should change the level file to match what is currently going on in the game
+	 * This means any items the player may have picked up, their progression with NPC's, monsters killed, etc.
+	 * 
 	 */
 	
 	public static final String TITLE = "Title goes here";
@@ -141,6 +150,8 @@ public class TerminalApplication {
 		System.out.println();
 		System.out.println(currentArea.getDescription());
 		
+		character.giveItem(new Item("Potion", "This is a magical potion!"));
+		
 		// When the player starts the game, we want to print out their stats (health, inventory, etc.)
 		// As well as the description of their current location where they left off
 		// This can be in this method as opposed to init() because it should happen for both new characters and loaded ones
@@ -253,16 +264,135 @@ public class TerminalApplication {
 				// Check to see if they player wants to look around
 				if (Contains.arrElementsAsWordsInString(new String[] {"look", "view", "see"}, input) != -1)
 					System.out.println(currentArea.getDescription());
+				
+				// Inspect gets its own category because it has multiple uses
+				// It can either look around, or look at an item
+				if (Contains.wordInString("inspect", input)) {
+					String[] words = Contains.separateBySpacesIntoArray(input);
+					if (words.length < 2) {
+						// Just look around the area
+						System.out.println(currentArea.getDescription());
+					} else {
+						// We search through the player's items and the items in the level and look at them
+						boolean done = false;
+						for (int i = 0; i < character.getItems().size(); i++) {
+							if (Contains.string2InString1(input, character.getItems().get(i).getName())) {
+								System.out.println(character.getItems().get(i).getName() + ":");
+								System.out.println(character.getItems().get(i).getDescription());
+								done = true;
+								break;
+							}
+						}
+						// TODO look through the area for any items matching the name
+						for (int i = 0; i < currentArea.getItems().size(); i++) {
+							if (Contains.string2InString1(input, currentArea.getItems().get(i).getName())) {
+								System.out.println(currentArea.getItems().get(i).getName() + ":");
+								System.out.println(currentArea.getItems().get(i).getDescription());
+								done = true;
+								break;
+							}
+						}
+						if (!done)
+							System.out.println(Keywords.NO_ITEM_PHRASES[rng.nextInt(Keywords.NO_ITEM_PHRASES.length)]);
+					}
+				}
+
+				
+				// If the player wants to see their inventory
 				if (Contains.arrElementsAsWordsInString(new String[] {"inventory", "items", "item"}, input) != -1)
 					character.printItems();
+				
+				// If the player wants to exit the game
+				if (Contains.arrElementsAsWordsInString(new String[] {"exit", "quit"}, input) != -1) {
+					System.out.println("Would you like to save before exiting?");
+					System.out.println("(Yes, No, Cancel)");
+					String nextInput = sc.nextLine();
+					if (nextInput.equalsIgnoreCase("yes")) {
+						// TODO save and quit here
+						character.saveCharacter();
+						System.exit(0);
+					} else if (nextInput.equalsIgnoreCase("no")) {
+						System.exit(0);
+					} else {
+						System.out.println("Game will now resume!");
+						// Do nothing, because we don't want to exit the program
+					}
+				}
+				
+				// If the player wants to take an item from a level
+				if (Contains.arrElementsAsWordsInString(new String[] {"take", "pick", "grab"}, input) != -1) {
+					String[] words = Contains.separateBySpacesIntoArray(input);
+					outside:
+					if (currentArea.getItems() != null) {
+						for (int i = 0; i < currentArea.getItems().size(); i++) {
+							for (int j = 0; j < words.length; j++) {
+								if (currentArea.getItems().get(i).getName().equalsIgnoreCase(words[j])) {
+									// Give the item to the player and remove it from the level
+									// TODO this might not be done yet, not quite sure
+									System.out.println("You got a " + currentArea.getItems().get(i).getName() + "!");
+									character.giveItem(currentArea.giveItem(words[j]));
+									//currentArea.getItems().remove(i);
+									break outside;
+								}
+							}
+						}
+						System.out.println(Keywords.NO_ITEM_PHRASES[rng.nextInt(Keywords.NO_ITEM_PHRASES.length)]);
+					}
+				}
+				
+				// If the player wants to drop an item on in an area
+				if (Contains.wordInString("drop", input)) {
+					boolean done = false;
+					for (int i = 0; i < character.getItems().size(); i++) {
+						if (Contains.string2InString1(input, character.getItems().get(i).getName())) {
+							System.out.println("Dropped " + character.getItems().get(i).getName() + "!");
+							currentArea.getItems().add(character.getItems().get(i));
+							character.getItems().remove(i);
+							done = true;
+							break;
+						}
+					}
+					if (!done)
+						System.out.println(Keywords.NO_ITEM_PHRASES[rng.nextInt(Keywords.NO_ITEM_PHRASES.length)]);
 
+				}
+				
+				// If the player wants to see the help screen
+				if (Contains.arrElementsAsWordsInString(new String[] {"help", "manual", "guide"}, input) != -1) {
+					// Nothing too crazy, most of this is just for formatting, so this really shouldn't need to be changed at any point
+					System.out.println("Any of the following keywords are valid:");
+					System.out.println("Movement - ");
+					for (String s: Keywords.MOVEMENT_KEYWORDS) {
+						System.out.print(s + " ");
+					}
+					System.out.println("\nManagement - ");
+					for (String s: Keywords.MANAGEMENT_KEYWORDS) {
+						System.out.print(s + " ");
+					}
+					System.out.println("\nCombat - ");
+					for (String s: Keywords.COMBAT_KEYWORDS) {
+						System.out.print(s + " ");
+					}
+					System.out.println();
+
+				}
+
+				// If the player wants to interact with any NPCs in the area
+				if (Contains.arrElementsAsWordsInString(new String[] {"talk", "ask", "say"}, input) != -1) {
+					if (currentArea.getNPC() != null) {
+						currentArea.getNPC().interact(character);
+					} else {
+						System.out.println(Keywords.NO_NPC_PHRASES[rng.nextInt(Keywords.NO_NPC_PHRASES.length)]);
+					}
+				}
+				
 				break;
 			case Keywords.COMBAT:
 				System.out.println(category);
 				// TODO
 				break;
 			}
-									
+												
 		}
 		//});
 		//gameLoop.start();

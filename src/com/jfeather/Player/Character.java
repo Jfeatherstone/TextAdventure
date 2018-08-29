@@ -22,7 +22,7 @@ public class Character {
 	private String name = DEFAULT_NAME;
 	private int level;
 	private int health, maxHealth;
-	private ArrayList<String> items;
+	private ArrayList<Item> items;
 	
 	// Reference variables and values
 	private File saveFile;
@@ -37,25 +37,25 @@ public class Character {
 	}
 	
 	// This constructor is for reading in character data, and needs every field and assumes nothings
-	public Character(String newName, int newLevel, ArrayList<String> newItems) {
+	public Character(String newName, int newLevel, ArrayList<Item> newItems) {
 		name = newName;
 		level = newLevel;
 		items = newItems;
 	}
 	
-	public void giveItem(String newItem) {
+	public void giveItem(Item newItem) {
 		if (newItem != null)
 			items.add(newItem);
 	}
 	
-	public ArrayList<String> getItems() {
+	public ArrayList<Item> getItems() {
 		return items;
 	}
 	
 	public void printItems() {
 		if (items.size() > 0) {
 			System.out.println("You have the following item(s):");
-			items.forEach(i -> System.out.println(i));
+			items.forEach(i -> System.out.println(i.getName()));
 		} else {
 			Random rng = new Random();
 			String[] phrase = {"You can't seem to find anything!", "I'm sure you'll find something soon...", "You have nothing!", "Your bag is empty!", "You come up empty handed!"};

@@ -28,6 +28,15 @@ abstract public class Contains {
 		return -1;
 
 	}
+	
+	public static boolean string2InString1(String str1, String str2) {
+		// Search for str2 in str1
+		for (int i = 0; i < str1.length() - str2.length() + 1; i++) {
+			if (str1.substring(i, i + str2.length()).toLowerCase().equals(str2.toLowerCase()))
+				return true;
+		}
+		return false;
+	}
 
 	
 	public final static boolean wordInString(String word, String str) {
